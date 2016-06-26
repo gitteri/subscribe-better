@@ -33,72 +33,18 @@
     $.fn.openWindow = function() {
       var el = $(this);
       if(el.is(":hidden") && shown == false && animating == false) {
-        animating = true;
+        shown = true;
+        el.fancybox({
+          autoScale: true,
+          autoDimensions: true,
+          centerOnScroll: settings.scrollableModal
+        }).trigger('click');
 
-        setTimeout(function() {
-          if (settings.scrollableModal == true) {
-            if($(".sb-overlay").length < 1) {
-              $("body").append("<div class='sb-overlay'><div class='sb-close-backdrop'></div><div class='sb sb-withoverlay'>" + $(".sb").html() + "</div></div>");
-              $(".sb-close-backdrop, .sb-close-btn").one("click", function() {
-                $(".sb.sb-withoverlay").closeWindow();
-                return false;
-              });
-              $(".sb.sb-withoverlay").removeClass("sb-animation-" + settings.animation.replace('In', 'Out')).addClass("sb-animation-" + settings.animation);
-              setTimeout(function(){
-                $(".sb.sb-withoverlay").show();
-                $("body").addClass("sb-open sb-open-with-overlay");
-              }, 300);
-            }
-          } else {
-            if ($(".sb-overlay").length < 1) {
-              $("body").append("<div class='sb-overlay'><div class='sb-close-backdrop'></div></div>");
-              $(".sb").removeClass("sb-animation-" + settings.animation.replace('In', 'Out')).addClass("sb-animation-" + settings.animation);
-              $(".sb-close-backdrop, .sb-close-btn").one("click", function() {
-                $(".sb").closeWindow();
-                return false;
-              });
-              setTimeout(function(){
-                $(".sb").show();
-                $("body").addClass("sb-open");
-              }, 300);
-            }
-
-          }
-          if (settings.showOnce == true) shown = true;
-          animating = false;
-        }, settings.delay);
       }
     }
 
     $.fn.closeWindow = function() {
-      var el = $(this);
-      if(el.is(":visible") && animating == false) {
-        animating = true;
-        if (settings.scrollableModal == true) {
-
-          $(".sb.sb-withoverlay").removeClass("sb-animation-" + settings.animation).addClass("sb-animation-" + settings.animation.replace('In', 'Out'));
-
-          setTimeout(function(){
-            $(".sb.sb-withoverlay").hide();
-            $("body").removeClass("sb-open sb-open-with-overlay");
-            setTimeout(function() {
-              $(".sb-overlay").remove();
-            }, 300);
-          }, 300);
-
-        } else {
-
-          $(".sb").removeClass("sb-animation-" + settings.animation).addClass("sb-animation-" + settings.animation.replace('In', 'Out'));
-          setTimeout(function(){
-            $(".sb").hide();
-            $("body").removeClass("sb-open");
-            setTimeout(function() {
-              $(".sb-overlay").remove();
-            }, 300);
-          }, 300);
-        }
-        animating = false;
-      }
+      $.fancybox.close();
     }
 
     $.fn.scrollDetection = function (trigger, onDone) {
