@@ -17,9 +17,11 @@
     trigger: "atendpage", // atendpage | onload | onidle
     animation: "fade", // fade | flyInRight | flyInLeft | flyInUp | flyInDown
     delay: 0,
+    class: false,
     showOnce: true,
     autoClose: false,
-    scrollableModal: false
+    scrollableModal: false,
+    callback: function () { return true; }
 	};
 
   $.fn.subscribeBetter = function(options){
@@ -32,19 +34,27 @@
 
     $.fn.openWindow = function() {
       var el = $(this);
-      if(el.is(":hidden") && shown == false && animating == false) {
+      if(shown === false && animating === false) {
         shown = true;
-        el.fancybox({
-          autoScale: true,
-          autoDimensions: true,
-          centerOnScroll: settings.scrollableModal
-        }).trigger('click');
-
+        if (settings.class) {
+           el.addClass('active');
+        } else {
+          el.fancybox({
+            autoScale: true,
+            autoDimensions: true,
+            centerOnScroll: settings.scrollableModal
+          }).trigger('click');
+        }
+        settings.callback();
       }
     }
 
     $.fn.closeWindow = function() {
-      $.fancybox.close();
+      if (settings.class) {
+         $this.removeClass('active');
+      } else {
+        $.fancybox.close();
+      }
     }
 
     $.fn.scrollDetection = function (trigger, onDone) {
@@ -63,14 +73,14 @@
               $(window).trigger('scrollEnd');
           }, 300);
       });
-      if (trigger == "scrollStart") {
+      if (trigger === "scrollStart") {
         $(window).bind('scrollStart', function(){
           $(window).unbind('scrollEnd');
           onDone();
         });
       }
 
-      if (trigger == "scrollEnd") {
+      if (trigger === "scrollEnd") {
         $(window).bind('scrollEnd', function(){
           $(window).unbind('scrollStart');
           onDone();
@@ -86,7 +96,7 @@
             el.openWindow();
           } else {
             if (yPos + 300 < ($(document).height() - $(window).height()) ) {
-              if(settings.autoClose == true) {
+              if(settings.autoClose === true) {
                 el.closeWindow();
               }
             }
@@ -97,8 +107,11 @@
       case "onload":
 
         $(window).load(function(){
-          el.openWindow();
-          if(settings.autoClose == true) {
+          console.log('loading sign up form.');
+          setTimeout(function() {
+            el.openWindow();
+          }, settings.delay);
+          if(settings.autoClose === true) {
             el.scrollDetection("scrollStart", function() {
               el.closeWindow();
             });
@@ -114,7 +127,7 @@
             el.openWindow();
           });
 
-          if(settings.autoClose == true) {
+          if(settings.autoClose === true) {
               el.scrollDetection("scrollStart", function() {
                 el.closeWindow();
               });
